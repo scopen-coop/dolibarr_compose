@@ -50,13 +50,13 @@ RUN echo 'xdebug.remote_log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'localhost docker.host' >> /etc/hosts
 
 # set up sendmail config, to use maildev
-
 RUN echo "account default" > /etc/msmtprc
 RUN echo "auth off" >> /etc/msmtprc
 RUN echo "port 25" >> /etc/msmtprc
 RUN echo "host mail" >> /etc/msmtprc
+RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc
-RUN echo "sendmail_path=/usr/bin/msmtp -i -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
+RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
 RUN echo "localhost localhost.localdomain" >> /etc/hosts
 
 EXPOSE 80
