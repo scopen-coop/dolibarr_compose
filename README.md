@@ -25,7 +25,7 @@ And then, you can run :
 
         docker-compose up
 
-This will run 3 container Docker : Dolibarr, MariaDB and PhpMyAdmin.
+This will run 4 container Docker : Dolibarr, MariaDB, PhpMyAdmin and Maildev.
 
 The URL to go to the Dolibarr is :
 
