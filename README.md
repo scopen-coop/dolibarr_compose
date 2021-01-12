@@ -17,13 +17,9 @@ Before build/run, define the variable HOST_USER_ID as following:
 
         export HOST_USER_ID=$(id -u)
 
-Go in repository build/docker :
-
-        cd build/docker
-
 And then, you can run :
 
-        docker-compose up
+        ./docker-compose up
 
 This will run 4 container Docker : Dolibarr, MariaDB, PhpMyAdmin and Maildev.
 
