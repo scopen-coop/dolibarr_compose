@@ -1,7 +1,6 @@
 FROM php:7.4-apache
 
 ENV PHP_INI_DATE_TIMEZONE 'UTC'
-ENV PHP_INI_MEMORY_LIMIT 256M
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -23,8 +22,11 @@ RUN apt-get update -y \
         msmtp \
         msmtp-mta \
         mailutils \
+        libc-client-dev \
+        libkrb5-dev \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap \
     && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -38,16 +40,16 @@ COPY docker-run.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-run.sh
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
-RUN echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so"' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_autostart=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_enable=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.default_enable=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_host=docker.host' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_port=9000' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_connect_back=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.profiler_enable=0' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'localhost docker.host' >> /etc/hosts
+RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.start_with_request=yes' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.show_local_vars=1' >> ${PHP_INI_DIR}/php.ini
+
+#set change max value
+RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 9999/' ${PHP_INI_DIR}/php.ini \
+ && sed -E -i -e 's/memory_limit = 128M/memory_limit = 256M/' ${PHP_INI_DIR}/php.ini \
+ && sed -E -i -e 's/post_max_size = 8M/post_max_size = 64M/' ${PHP_INI_DIR}/php.ini \
+ && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 64M/' ${PHP_INI_DIR}/php.ini
 
 # set up sendmail config, to use maildev
 RUN echo "account default" > /etc/msmtprc
