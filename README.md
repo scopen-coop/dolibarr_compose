@@ -39,5 +39,5 @@ In Dolibarr configuration Email let PHP mail function, To see all mail send by D
 
         http://0.0.0.0:6081
 
-Setup the database connection during the installation process, please use mariadb (name of the database container) as database host.
+Setup the database connection during the installation process, please use dolibarr_mariadb (name of the database container) as database host.
 Setup documents folder, during the installation process, to /var/documents

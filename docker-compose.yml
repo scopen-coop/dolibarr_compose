@@ -13,6 +13,7 @@ volumes:
 services:
     mariadb:
         image: mariadb:latest
+        container_name: dolibarr_mariadb
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: dolibarr
@@ -26,6 +27,7 @@ services:
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
+        container_name: dolibarr_phpmyadmin
         environment:
             PMA_HOST: mariadb
         depends_on:
@@ -38,6 +40,7 @@ services:
 
     web:
         build: .
+        container_name: dolibarr_web
         environment:
             HOST_USER_ID: $HOST_USER_ID
         volumes:
@@ -54,6 +57,7 @@ services:
             - external-pod
 
     mail:
+        container_name: dolibarr_maildev
         image: maildev/maildev
         ports:
             - "6081:80"
