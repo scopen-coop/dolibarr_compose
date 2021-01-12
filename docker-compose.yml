@@ -45,7 +45,7 @@ services:
             - ../../module/dolibarr/documents:/var/documents
         ports:
             - "80:80"
-            - "9000:9000"
+            - "6000:9000"
         depends_on:
             - mariadb
             - mail
@@ -56,7 +56,7 @@ services:
     mail:
         image: maildev/maildev
         ports:
-            - "8081:80"
+            - "6081:80"
             - "25:25"
         networks:
             - internal-pod
