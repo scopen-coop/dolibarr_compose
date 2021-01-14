@@ -9,6 +9,8 @@ networks:
 volumes:
     mariadb-dolibarr:
         external: true
+    dolibarr_postgres_metabase:
+        external: true
 
 services:
     mariadb:
@@ -65,3 +67,38 @@ services:
         networks:
             - internal-pod
             - external-pod
+
+    postgres_metabase:
+        container_name: dolibarr_postgres_metabase
+        image: postgres:latest
+        volumes:
+            - dolibarr_postgres_metabase:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: metabase
+            POSTGRES_USER: metabase
+            POSTGRES_PASSWORD: metabase
+        networks:
+            - internal-pod
+            - external-pod
+
+    metalab:
+        container_name: dolibarr_metalab
+        image : metabase/metabase
+        environment:
+            MB_DB_TYPE: postgres
+            MB_DB_DBNAME: metabase
+            MB_DB_PORT: 5432
+            MB_DB_USER: metabase
+            MB_DB_PASS: metabase
+            MB_DB_HOST: dolibarr_postgres_metabase
+#        volumes:
+#            - /data/metabase/metabase-data:/metabase-data
+        networks:
+            - internal-pod
+            - external-pod
+        ports:
+            - "6082:3000"
+        depends_on:
+            - postgres_metabase
