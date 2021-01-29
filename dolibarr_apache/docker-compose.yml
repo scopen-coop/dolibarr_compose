@@ -46,8 +46,8 @@ services:
         environment:
             HOST_USER_ID: $HOST_USER_ID
         volumes:
-            - ../../module/dolibarr/htdocs:/var/www/html
-            - ../../module/dolibarr/documents:/var/documents
+            - ../../../module/dolibarr/htdocs:/var/www/html
+            - ../../../module/dolibarr/documents:/var/documents
         ports:
             - "80:80"
             - "6000:9000"
