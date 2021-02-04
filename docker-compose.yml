@@ -1,0 +1,67 @@
+version: '3'
+
+networks:
+    strad-internal-pod:
+        internal: true
+    strad-external-pod:
+        internal: false
+
+volumes:
+    mariadb-dolibarr:
+        external: true
+
+services:
+    mariadb:
+        image: mariadb:latest
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES UTF8;'
+        container_name: strad_dolibarr_mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: dolibarr
+        ports:
+            - "3306:3306"
+        networks:
+            - strad-internal-pod
+            - strad-external-pod
+        volumes:
+            - mariadb-dolibarr:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        environment:
+            PMA_HOST: mariadb
+        depends_on:
+            - mariadb
+        ports:
+            - "8080:80"
+        networks:
+            - strad-internal-pod
+            - strad-external-pod
+
+    web:
+        build: .
+        container_name: strad_dolibarr_web
+        environment:
+            HOST_USER_ID: $HOST_USER_ID
+        volumes:
+            - ../../strad/dolibarr/htdocs:/var/www/html
+            - ../../strad/dolibarr/documents:/var/documents
+        ports:
+            - "80:80"
+            - "6000:9000"
+        depends_on:
+            - mariadb
+            - strad_mail
+        networks:
+            - strad-internal-pod
+            - strad-external-pod
+
+    strad_mail:
+        image: maildev/maildev
+        container_name: strad_mail
+        ports:
+            - "6081:80"
+            - "25:25"
+        networks:
+            - strad-internal-pod
+            - strad-external-pod
