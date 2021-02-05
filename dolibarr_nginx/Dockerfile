@@ -25,8 +25,8 @@ RUN apt-get update -y \
         mailutils \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
+    && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) ldap && \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
