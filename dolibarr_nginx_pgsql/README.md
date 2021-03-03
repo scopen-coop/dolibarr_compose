@@ -20,13 +20,40 @@ First times create volume for maria db
         
 Or And create volume for pgsql
 
-    mkdir -p /opt/data/dolibarr
+    mkdir -p /opt/data/pgsql/dolibarr
+    
+    docker volume create --driver local \
+        --opt type=none \
+        --opt device=/opt/data/pgsql/dolibarr \
+        --opt o=bind pgsqldb-dolibarr
+
+
+### .env file
+
+Then, create a .env file all environment variables, including the root password, as follows (the password is raw after the equal sign) :
+
+       `PGSQL_ROOT_PASSWORD=root`
+
+PLEASE, do apply secure permissions to this .env file (in **production**):
+
+        chmod 600 .env
+
+
+### Run compose
 
 And then, you can run :
 
         docker-compose up
 
 This will run 4 container Docker : Dolibarr, MariaDB, PhpMyAdmin and Maildev.
+
+On first install set
+        
+        dolstdpg-dolibarr-pgsqldb
+        
+as databse host
+
+and `/var/documents` as Document folder
 
 The URL to go to the Dolibarr is :
 
@@ -40,5 +67,3 @@ In Dolibarr configuration Email let PHP mail function, To see all mail send by D
 
         http://0.0.0.0:6081
 
-Setup the database connection during the installation process, please use mariadb (name of the database container) as database host.
-Setup documents folder, during the installation process, to /var/documents

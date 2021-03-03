@@ -17,6 +17,26 @@ Before build/run, define the variable HOST_USER_ID as following:
 
         export HOST_USER_ID=$(id -u)
 
+### .env file
+
+Then, create a .env file all environment variables, including the root password, as follows (the password is raw after the equal sign) :
+
+       `MYSQL_ROOT_PASSWORD=qsdqsdsqdsqdq`
+
+PLEASE, do apply secure permissions to this .env file (in **production**):
+
+        chmod 600 .env
+
+### Run compose
+
+On first install set
+        
+            dolibarr_mariadb
+        
+as databse host
+
+and `/var/documents` as Document folder
+
 And then, you can run :
 
         ./docker-compose up
@@ -34,6 +54,3 @@ The URL to go to PhpMyAdmin is (login/password is root/root) :
 In Dolibarr configuration Email let PHP mail function, To see all mail send by Dolibarr go to maildev
 
         http://0.0.0.0:6081
-
-Setup the database connection during the installation process, please use dolibarr_mariadb (name of the database container) as database host.
-Setup documents folder, during the installation process, to /var/documents

@@ -1,9 +1,9 @@
 version: '3.8'
 
 networks:
-    internal-pod:
+    dolstdpg-internal-pod:
         internal: true
-    external-pod:
+    dolstdpg-external-pod:
         internal: false
 
 volumes:
@@ -15,22 +15,28 @@ services:
         image: postgres:12.1-alpine
         container_name: dolstdpg_dolibarr_pgsqldb
         environment:
-            POSTGRES_PASSWORD: root
+            POSTGRES_PASSWORD: ${PGSQL_ROOT_PASSWORD}
             POSTGRES_DB: dolibarr
+            PGDATA: /var/lib/postgresql/data/dolibarr/
         ports:
             - "5433:5433"
+            - "5432:5432"
         networks:
-            - internal-pod
-            - external-pod
+            - dolstdpg-internal-pod
+            - dolstdpg-external-pod
         volumes:
-            - pgsqldb-dolibarr:/var/lib/postgresql/data/pgdata
+            - pgsqldb-dolibarr:/var/lib/postgresql/data/dolibarr
 
     dolstdpg-adminer:
         image: adminer:latest
+        container_name: dolstdpg_adminer
         ports:
             - 7000:8080
         depends_on:
-            - pgsql
+            - dolstdpg-dolibarr-pgsqldb
+        networks:
+            - dolstdpg-internal-pod
+            - dolstdpg-external-pod
 
     dolstdpg-web-nginx:
         image: nginx:1.18-alpine
@@ -42,11 +48,11 @@ services:
         ports:
             - "80:80"
         networks:
-            - internal-pod
-            - external-pod
+            - dolstdpg-internal-pod
+            - dolstdpg-external-pod
         depends_on:
-            - pgsql
-            - mail
+            - dolstdpg-dolibarr-pgsqldb
+            - dolstdpg-mail
 
     dolstdpg-web-php:
         build: .
@@ -57,19 +63,19 @@ services:
         ports:
             - "6000:9003"
         networks:
-            - internal-pod
-            - external-pod
+            - dolstdpg-internal-pod
+            - dolstdpg-external-pod
         depends_on:
-            - web-nginx
+            - dolstdpg-web-nginx
 
     dolstdpg-mail:
         image: maildev/maildev
-        container_name: dolstdpg-_dolibarr_maildev
+        container_name: dolstdpg_dolibarr_maildev
         ports:
             - "6081:80"
             - "25:25"
         networks:
-            - internal-pod
-            - external-pod
+            - dolstdpg-internal-pod
+            - dolstdpg-external-pod
 
 

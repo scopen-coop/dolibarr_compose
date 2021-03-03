@@ -9,15 +9,13 @@ networks:
 volumes:
     mariadb-dolibarr:
         external: true
-    dolibarr_postgres_metabase:
-        external: true
 
 services:
     mariadb:
         image: mariadb:latest
         container_name: dolibarr_mariadb
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DATABASE: dolibarr
         ports:
             - "3306:3306"
@@ -67,32 +65,3 @@ services:
         networks:
             - internal-pod
             - external-pod
-
-    metalab_mariadb:
-        image: mariadb:latest
-        container_name: metalab_mariadb
-        environment:
-            MYSQL_ROOT_PASSWORD: metabase
-            MYSQL_DATABASE: metabase
-        networks:
-            - internal-pod
-        volumes:
-            - mariadb-metabase:/var/lib/mysql
-
-    metalab:
-        container_name: dolibarr_metalab
-        image: metabase/metabase
-        environment:
-            MB_DB_TYPE: mysql
-            MB_DB_DBNAME: metabase
-            MB_DB_PORT: 3306
-            MB_DB_USER: root
-            MB_DB_PASS: metabase
-            MB_DB_HOST: metalab_mariadb
-        networks:
-            - internal-pod
-            - external-pod
-        ports:
-            - "6082:3000"
-        depends_on:
-            - metalab_mariadb

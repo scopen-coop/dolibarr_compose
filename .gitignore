@@ -1,1 +1,6 @@
 .idea
+dolibarr_nginx/.env
+dolibarr_nginx/nginx/log/*.log
+dolibarr_apache/.env
+dolibarr_nginx_pgsql/.env
+
