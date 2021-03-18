@@ -50,7 +50,7 @@ RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 9999/' ${PHP_IN
 RUN echo "account default" > /etc/msmtprc
 RUN echo "auth off" >> /etc/msmtprc
 RUN echo "port 25" >> /etc/msmtprc
-RUN echo "host mail" >> /etc/msmtprc
+RUN echo "host dolstd-mail" >> /etc/msmtprc
 RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
