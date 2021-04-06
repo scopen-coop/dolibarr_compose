@@ -11,7 +11,7 @@ volumes:
         external: true
 
 services:
-    mariadb:
+    strad_mariadb:
         image: mariadb:latest
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES UTF8;'
         container_name: strad_dolibarr_mariadb
@@ -29,16 +29,16 @@ services:
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         environment:
-            PMA_HOST: mariadb
+            PMA_HOST: strad_mariadb
         depends_on:
-            - mariadb
+            - strad_mariadb
         ports:
             - "8080:80"
         networks:
             - strad-internal-pod
             - strad-external-pod
 
-    web:
+    strad_web:
         build: .
         container_name: strad_dolibarr_web
         environment:
@@ -50,7 +50,7 @@ services:
             - "80:80"
             - "6000:9000"
         depends_on:
-            - mariadb
+            - strad_mariadb
             - strad_mail
         networks:
             - strad-internal-pod
