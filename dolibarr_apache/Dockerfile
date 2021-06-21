@@ -1,6 +1,7 @@
 FROM php:7.4-apache
 
 ENV PHP_INI_DATE_TIMEZONE 'UTC'
+ENV PHP_INI_MEMORY_LIMIT 256M
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -30,7 +31,8 @@ RUN apt-get update -y \
     && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) ldap && \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install -j$(nproc) ldap imap && \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
@@ -55,7 +57,7 @@ RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 9999/' ${PHP_IN
 RUN echo "account default" > /etc/msmtprc
 RUN echo "auth off" >> /etc/msmtprc
 RUN echo "port 25" >> /etc/msmtprc
-RUN echo "host mail" >> /etc/msmtprc
+RUN echo "host dolibarr_maildev" >> /etc/msmtprc
 RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini

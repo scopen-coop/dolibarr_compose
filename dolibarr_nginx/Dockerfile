@@ -23,16 +23,19 @@ RUN apt-get update -y \
         msmtp \
         msmtp-mta \
         mailutils \
+        libc-client-dev \
+        libkrb5-dev \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
     && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) ldap && \
+    && docker-php-ext-install -j$(nproc) ldap imap && \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
-RUN chown -R www-data:www-data /var/documents
+RUN chown -R 1000:www-data /var/documents
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini

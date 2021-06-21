@@ -30,7 +30,8 @@ RUN apt-get update -y \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo pgsql pdo_mysql pdo_pgsql gd soap zip \
     && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) ldap && \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install -j$(nproc) ldap imap && \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
