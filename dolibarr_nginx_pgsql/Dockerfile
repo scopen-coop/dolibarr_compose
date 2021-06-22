@@ -1,6 +1,5 @@
 FROM php:7.4.3-fpm
 
-ENV PHP_INI_DATE_TIMEZONE 'UTC'
 ENV PHP_INI_MEMORY_LIMIT 256M
 
 RUN apt-get update -y \
@@ -25,6 +24,8 @@ RUN apt-get update -y \
         msmtp-mta \
         mailutils \
         libpq-dev \
+        libc-client-dev \
+        libkrb5-dev \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo pgsql pdo_mysql pdo_pgsql gd soap zip \
@@ -48,6 +49,8 @@ RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 9999/' ${PHP_IN
  && sed -E -i -e 's/memory_limit = 128M/memory_limit = 256M/' ${PHP_INI_DIR}/php.ini \
  && sed -E -i -e 's/post_max_size = 8M/post_max_size = 64M/' ${PHP_INI_DIR}/php.ini \
  && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 64M/' ${PHP_INI_DIR}/php.ini
+ 
+RUN echo "date.timezone = 'Europe/Paris'" >> ${PHP_INI_DIR}/php.ini
 
 # set up sendmail config, to use maildev
 RUN echo "account default" > /etc/msmtprc

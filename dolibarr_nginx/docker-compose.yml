@@ -25,6 +25,8 @@ services:
             - dolstd-external-pod
         volumes:
             - mariadb-dolibarr:/var/lib/mysql
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
 
     dolstd_phpmyadmin:
         image: phpmyadmin/phpmyadmin
@@ -46,6 +48,8 @@ services:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ../../../module/dolibarr/htdocs:/var/www/html:rw
             - ./nginx/log/:/var/log/nginx/
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
         ports:
             - "80:80"
         networks:
@@ -61,6 +65,8 @@ services:
         volumes:
             - ../../../module/dolibarr/htdocs:/var/www/html:rw
             - ../../../module/dolibarr/documents:/var/documents:rw
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
         ports:
             - "6000:9003"
         networks:

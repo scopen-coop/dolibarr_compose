@@ -24,6 +24,8 @@ services:
             - external-pod
         volumes:
             - mariadb-dolibarr:/var/lib/mysql
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
@@ -46,6 +48,8 @@ services:
         volumes:
             - ../../../module/dolibarr/htdocs:/var/www/html:rw
             - ../../../module/dolibarr/documents:/var/documents::rw
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
         ports:
             - "80:80"
             - "6000:9000"
