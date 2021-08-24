@@ -1,4 +1,5 @@
 .idea
+dolibarr_php8_nginx/.env
 dolibarr_nginx/.env
 dolibarr_nginx/nginx/log/*.log
 dolibarr_apache/.env
