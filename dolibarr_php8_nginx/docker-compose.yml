@@ -1,0 +1,86 @@
+version: '3.8'
+
+networks:
+    dolstd8-internal-pod:
+        internal: true
+    dolstd8-external-pod:
+        internal: false
+
+volumes:
+    mariadb-dolibarr:
+        external: true
+
+services:
+    dolstd8-mariadb:
+        image: mariadb:latest
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES UTF8;'
+        container_name: dolibarr_mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: dolibarr
+        ports:
+            - "3306:3306"
+        networks:
+            - dolstd8-internal-pod
+            - dolstd8-external-pod
+        volumes:
+            - mariadb-dolibarr:/var/lib/mysql
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+
+    dolstd8_phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: dolstd8_phpmyadmin
+        environment:
+            PMA_HOST: dolstd8-mariadb
+        depends_on:
+            - dolstd8-mariadb
+        ports:
+            - "8080:80"
+        networks:
+            - dolstd8-internal-pod
+            - dolstd8-external-pod
+
+    dolstd8-web-nginx:
+        image: nginx:1.18-alpine
+        container_name: dolstd8_dolibarr_nginx
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ../../../module/dolibarr/htdocs:/var/www/html:rw
+            - ./nginx/log/:/var/log/nginx/
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - "80:80"
+        networks:
+            - dolstd8-internal-pod
+            - dolstd8-external-pod
+        depends_on:
+            - dolstd8-mariadb
+            - dolstd8-mail
+
+    dolstd8-web-php:
+        build: .
+        container_name: dolstd8_dolibarr_web
+        volumes:
+            - ../../../module/dolibarr/htdocs:/var/www/html:rw
+            - ../../../module/dolibarr/documents:/var/documents:rw
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - "6000:9003"
+        networks:
+            - dolstd8-internal-pod
+            - dolstd8-external-pod
+        depends_on:
+            - dolstd8-web-nginx
+
+    dolstd8-mail:
+        image: maildev/maildev
+        container_name: dolstd8_maildev
+        ports:
+            - "6081:80"
+            - "25:25"
+        networks:
+            - dolstd8-internal-pod
+            - dolstd8-external-pod
