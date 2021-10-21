@@ -11,10 +11,10 @@ volumes:
         external: true
 
 services:
-    dolstd-mariadb:
+    dolstd8-mariadb:
         image: mariadb:latest
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES UTF8;'
-        container_name: dolibarr_mariadb
+        container_name: dolstd8_mariadb
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DATABASE: dolibarr
@@ -32,9 +32,9 @@ services:
         image: phpmyadmin/phpmyadmin
         container_name: dolstd8_phpmyadmin
         environment:
-            PMA_HOST: dolstd-mariadb
+            PMA_HOST: dolstd8-mariadb
         depends_on:
-            - dolstd-mariadb
+            - dolstd8-mariadb
         ports:
             - "8080:80"
         networks:
@@ -56,7 +56,7 @@ services:
             - dolstd8-internal-pod
             - dolstd8-external-pod
         depends_on:
-            - dolstd-mariadb
+            - dolstd8-mariadb
             - dolstd8-mail
 
     dolstd8-web-php:
