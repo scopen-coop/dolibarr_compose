@@ -43,6 +43,7 @@ RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.start_with_request=yes' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.show_local_vars=1' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.var_display_max_depth=10' >> ${PHP_INI_DIR}/php.ini
 
 #set change max value
 RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 9999/' ${PHP_INI_DIR}/php.ini \
