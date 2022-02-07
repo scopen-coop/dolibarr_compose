@@ -1,4 +1,4 @@
-FROM php:7.4.3-fpm
+FROM php:7.4-fpm
 
 ENV PHP_INI_MEMORY_LIMIT 256M
 

@@ -1,9 +1,9 @@
 version: '3'
 
 networks:
-    internal-pod:
+    dolstd-internal-pod:
         internal: true
-    external-pod:
+    dolstd-external-pod:
         internal: false
 
 volumes:
@@ -11,8 +11,9 @@ volumes:
         external: true
 
 services:
-    mariadb:
+    dolstd-mariadb:
         image: mariadb:latest
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES UTF8;'
         container_name: dolibarr_mariadb
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -20,25 +21,25 @@ services:
         ports:
             - "3306:3306"
         networks:
-            - internal-pod
-            - external-pod
+            - dolstd-internal-pod
+            - dolstd-external-pod
         volumes:
             - mariadb-dolibarr:/var/lib/mysql
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
 
-    phpmyadmin:
+    dolstd_phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        container_name: dolibarr_phpmyadmin
+        container_name: dolstd_phpmyadmin
         environment:
-            PMA_HOST: mariadb
+            PMA_HOST: dolstd-mariadb
         depends_on:
-            - mariadb
+            - dolstd-mariadb
         ports:
             - "8080:80"
         networks:
-            - internal-pod
-            - external-pod
+            - dolstd-internal-pod
+            - dolstd-external-pod
 
     web:
         build: .
@@ -47,25 +48,25 @@ services:
             HOST_USER_ID: $HOST_USER_ID
         volumes:
             - ../../../module/dolibarr/htdocs:/var/www/html:rw
-            - ../../../module/dolibarr/documents:/var/documents::rw
+            - ../../../module/dolibarr/documents:/var/documents:rw
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
         ports:
             - "80:80"
             - "6000:9000"
-        depends_on:
-            - mariadb
-            - mail
         networks:
-            - internal-pod
-            - external-pod
+            - dolstd-internal-pod
+            - dolstd-external-pod
+        depends_on:
+            - dolstd-mariadb
+            - dolstd-mail
 
-    mail:
-        container_name: dolibarr_maildev
+    dolstd-mail:
         image: maildev/maildev
+        container_name: dolstd_maildev
         ports:
             - "6081:80"
             - "25:25"
         networks:
-            - internal-pod
-            - external-pod
+            - dolstd-internal-pod
+            - dolstd-external-pod
