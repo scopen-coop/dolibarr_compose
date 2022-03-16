@@ -47,6 +47,7 @@ services:
         volumes:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ../../../module/dolibarr/htdocs:/var/www/html:rw
+            - ../../../module/dolibarr/scripts:/var/www/scripts:rw
             - ./nginx/log/:/var/log/nginx/
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
@@ -64,6 +65,7 @@ services:
         container_name: dolstd_dolibarr_web
         volumes:
             - ../../../module/dolibarr/htdocs:/var/www/html:rw
+            - ../../../module/dolibarr/scripts:/var/www/scripts:rw
             - ../../../module/dolibarr/documents:/var/documents:rw
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
