@@ -65,8 +65,8 @@ services:
         image: maildev/maildev
         container_name: dolstd_maildev_apache
         ports:
-            - "6081:80"
-            - "25:25"
+            - "6081:1080"
+            - "25:1025"
         networks:
             - dolstd-internal-pod
             - dolstd-external-pod

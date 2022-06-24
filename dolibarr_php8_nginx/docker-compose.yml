@@ -13,7 +13,7 @@ volumes:
 services:
     dolstd8-mariadb:
         image: mariadb:latest
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES UTF8;'
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
         container_name: dolstd8_mariadb
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}

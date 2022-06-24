@@ -13,7 +13,7 @@ volumes:
 services:
     dolstd-mariadb:
         image: mariadb:latest
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES UTF8;'
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
         container_name: dolibarr_mariadb
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -46,6 +46,7 @@ services:
         container_name: dolstd_dolibarr_nginx
         volumes:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./certs:/etc/nginx/ssl
             - ../../../module/dolibarr/htdocs:/var/www/html:rw
             - ../../../module/dolibarr/scripts:/var/www/scripts:rw
             - ./nginx/log/:/var/log/nginx/
@@ -81,8 +82,8 @@ services:
         image: maildev/maildev
         container_name: dolstd_maildev
         ports:
-            - "6081:80"
-            - "25:25"
+            - "6081:1080"
+            - "25:1025"
         networks:
             - dolstd-internal-pod
             - dolstd-external-pod
