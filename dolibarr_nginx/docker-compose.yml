@@ -12,9 +12,12 @@ volumes:
 
 services:
     dolstd-mariadb:
-        image: mariadb:latest
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-        container_name: dolibarr_mariadb
+        image: mariadb:10.6
+        command:
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+            - --max_allowed_packet=512M
+        container_name: dolstd-dolibarr_mariadb
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DATABASE: dolibarr
