@@ -57,6 +57,7 @@ services:
             - /etc/localtime:/etc/localtime:ro
         ports:
             - "80:80"
+            - "443:443"
         networks:
             - dolstd-internal-pod
             - dolstd-external-pod
