@@ -40,7 +40,7 @@ RUN chown www-data:www-data /var/documents
 COPY docker-run.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-run.sh
 
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN pecl install xdebug-3.1.0 && docker-php-ext-enable xdebug
 RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.start_with_request=yes' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini

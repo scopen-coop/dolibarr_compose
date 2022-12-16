@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:7.4.3-fpm
 
 ENV PHP_INI_MEMORY_LIMIT 256M
 
@@ -36,7 +36,7 @@ RUN apt-get update -y \
 RUN mkdir /var/documents
 RUN chown -R 1000:www-data /var/documents
 
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN pecl install xdebug-3.1.0 && docker-php-ext-enable xdebug
 RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.start_with_request=yes' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
@@ -45,7 +45,7 @@ RUN echo 'xdebug.var_display_max_depth=10' >> ${PHP_INI_DIR}/php.ini
 
 #set change max value
 RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 9999/' ${PHP_INI_DIR}/php.ini \
- && sed -E -i -e 's/memory_limit = 128M/memory_limit = 256M/' ${PHP_INI_DIR}/php.ini \
+ && sed -E -i -e 's/memory_limit = 128M/memory_limit = 512M/' ${PHP_INI_DIR}/php.ini \
  && sed -E -i -e 's/post_max_size = 8M/post_max_size = 64M/' ${PHP_INI_DIR}/php.ini \
  && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 64M/' ${PHP_INI_DIR}/php.ini
 
