@@ -26,11 +26,11 @@ RUN apt-get update -y \
         libkrb5-dev \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
+    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql soap zip \
     && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) ldap imap && \
+    && docker-php-ext-install -j$(nproc) gd ldap imap && \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
@@ -60,4 +60,3 @@ RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
 RUN echo "localhost localhost.localdomain" >> /etc/hosts
-
