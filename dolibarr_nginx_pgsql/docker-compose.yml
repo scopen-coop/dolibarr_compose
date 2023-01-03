@@ -12,7 +12,7 @@ volumes:
 
 services:
     dolstdpg-dolibarr-pgsqldb:
-        image: postgres:12.1-alpine
+        image: postgres:12.12-alpine
         container_name: dolstdpg_dolibarr_pgsqldb
         environment:
             POSTGRES_PASSWORD: ${PGSQL_ROOT_PASSWORD}
@@ -83,5 +83,3 @@ services:
         networks:
             - dolstdpg-internal-pod
             - dolstdpg-external-pod
-
-
