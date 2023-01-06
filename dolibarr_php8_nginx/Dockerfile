@@ -30,7 +30,7 @@ RUN apt-get update -y \
     && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) ldap imap gd && \
+    && docker-php-ext-install -j$(nproc) gd ldap imap && \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
@@ -45,7 +45,7 @@ RUN echo 'xdebug.var_display_max_depth=10' >> ${PHP_INI_DIR}/php.ini
 
 #set change max value
 RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 9999/' ${PHP_INI_DIR}/php.ini \
- && sed -E -i -e 's/memory_limit = 128M/memory_limit = 256M/' ${PHP_INI_DIR}/php.ini \
+ && sed -E -i -e 's/memory_limit = 128M/memory_limit = 512M/' ${PHP_INI_DIR}/php.ini \
  && sed -E -i -e 's/post_max_size = 8M/post_max_size = 64M/' ${PHP_INI_DIR}/php.ini \
  && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 64M/' ${PHP_INI_DIR}/php.ini
 
@@ -54,9 +54,8 @@ RUN echo "date.timezone = 'Europe/Paris'" >> ${PHP_INI_DIR}/php.ini
 # set up sendmail config, to use maildev
 RUN echo "account default" > /etc/msmtprc
 RUN echo "auth off" >> /etc/msmtprc
-RUN echo "port 25" >> /etc/msmtprc
-RUN echo "host dolstd8-mail" >> /etc/msmtprc
+RUN echo "port 1025" >> /etc/msmtprc
+RUN echo "host dolstd8_maildev" >> /etc/msmtprc
 RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
-RUN echo "localhost localhost.localdomain" >> /etc/hosts
