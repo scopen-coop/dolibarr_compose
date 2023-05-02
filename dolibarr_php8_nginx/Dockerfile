@@ -1,4 +1,4 @@
-FROM php:8.0-fpm
+FROM php:8.1-fpm
 
 ENV PHP_INI_MEMORY_LIMIT 256M
 
