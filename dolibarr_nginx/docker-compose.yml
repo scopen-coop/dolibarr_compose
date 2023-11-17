@@ -58,6 +58,7 @@ services:
         ports:
             - "80:80"
             - "443:443"
+            - "587:587"
         networks:
             - dolstd-internal-pod
             - dolstd-external-pod
