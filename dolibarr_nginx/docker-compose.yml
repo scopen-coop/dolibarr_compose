@@ -73,8 +73,11 @@ services:
             - ../../../module/dolibarr/htdocs:/var/www/html:rw
             - ../../../module/dolibarr/scripts:/var/www/scripts:rw
             - ../../../module/dolibarr/documents:/var/documents:rw
+            - ../../../module/dolibarr/build:/var/www/build:rw
+            - ../../../module/dolibarr/phpstan_custom.neon:/var/www/phpstan_custom.neon:r
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
+        # use for Xdebug local with IDE
         ports:
             - "6000:9003"
         networks:

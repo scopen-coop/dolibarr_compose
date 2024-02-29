@@ -49,14 +49,12 @@ and `/var/documents` as Document folder
 
 The URL to go to the Dolibarr is :
 
-        http://0.0.0.0
+        https://0.0.0.0
 
 The URL to go to PhpMyAdmin is (login/password is root/root) :
 
-        http://0.0.0.0:8080
+        https://0.0.0.0:8080
 
 In Dolibarr configuration Email let PHP mail function, To see all mail send by Dolibarr go to maildev
 
-        http://0.0.0.0:6081
-
-
+        https://0.0.0.0:6081
