@@ -24,6 +24,7 @@ RUN apt-get update -y \
         mailutils \
         libc-client-dev \
         libkrb5-dev \
+        telnet \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql soap zip \

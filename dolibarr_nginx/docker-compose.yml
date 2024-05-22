@@ -78,6 +78,7 @@ services:
         # use for Xdebug local with IDE
         ports:
             - "6000:9003"
+            #- '143:143'
         networks:
             - dolstd-internal-pod
             - dolstd-external-pod
