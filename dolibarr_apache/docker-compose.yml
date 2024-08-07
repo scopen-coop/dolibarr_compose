@@ -45,7 +45,7 @@ services:
         environment:
             HOST_USER_ID: $HOST_USER_ID
         volumes:
-            - ../../../module/dolibarr/htdocs:/var/www/html:rw
+            - ../../../module/dolibarr/htdocs:/var/www/htdocs:rw
             - ../../../module/dolibarr/documents:/var/documents:rw
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
