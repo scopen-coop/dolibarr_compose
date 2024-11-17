@@ -1,6 +1,6 @@
 FROM php:8.1-fpm
 
-ENV PHP_INI_MEMORY_LIMIT 256M
+ENV PHP_INI_MEMORY_LIMIT=256M
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -24,6 +24,8 @@ RUN apt-get update -y \
         mailutils \
         libc-client-dev \
         libkrb5-dev \
+        telnet \
+        npm \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql soap zip \
