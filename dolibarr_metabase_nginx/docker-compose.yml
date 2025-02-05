@@ -1,0 +1,96 @@
+networks:
+    dolstd-internal-pod:
+        internal: true
+    dolstd-external-pod:
+        internal: false
+
+volumes:
+    mariadb-dolibarr:
+        external: true
+
+services:
+    dolstd-mariadb:
+        image: mariadb:10.8
+        command:
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+            - --max_allowed_packet=512M
+        container_name: dolstd-dolibarr_mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: dolibarr
+        ports:
+            - "3306:3306"
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
+        volumes:
+            - mariadb-dolibarr:/var/lib/mysql
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+
+    dolstd_phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: dolstd_phpmyadmin
+        environment:
+            PMA_HOST: dolstd-mariadb
+        depends_on:
+            - dolstd-mariadb
+        ports:
+            - "8080:80"
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
+
+    dolstd-web-nginx:
+        image: nginx:1.18-alpine
+        container_name: dolstd_dolibarr_nginx
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./certs:/etc/nginx/ssl
+            - ../../../module/dolibarr/htdocs:/var/www/htdocs:rw
+            - ../../../module/dolibarr/scripts:/var/www/scripts:rw
+            - ./nginx/log/:/var/log/nginx/
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - "80:80"
+            - "443:443"
+            - "587:587"
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
+        depends_on:
+            - dolstd-mariadb
+            - dolstd-mail
+
+    dolstd-web-php:
+        build: .
+        container_name: dolstd_dolibarr_web
+        volumes:
+            - ../../../module/dolibarr/htdocs:/var/www/htdocs:rw
+            - ../../../module/dolibarr/scripts:/var/www/scripts:rw
+            - ../../../module/dolibarr/documents:/var/documents:rw
+            - ../../../module/dolibarr/build:/var/www/build:rw
+            - ../../../module/dolibarr/phpstan_custom.neon:/var/www/phpstan_custom.neon:r
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        # use for Xdebug local with IDE
+        ports:
+            - "6000:9003"
+            #- '143:143'
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
+        depends_on:
+            - dolstd-web-nginx
+
+    dolstd-mail:
+        image: maildev/maildev
+        container_name: dolstd_maildev
+        ports:
+            - "6081:1080"
+            - "25:1025"
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
