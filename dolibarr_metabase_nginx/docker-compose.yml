@@ -94,3 +94,23 @@ services:
         networks:
             - dolstd-internal-pod
             - dolstd-external-pod
+
+    dolstd-metabase:
+        container_name: dolber_metabase
+        image: metabase/metabase
+        restart: "no"
+        environment:
+            MB_SITE_URL: "https://metabase.local"
+            MB_DB_TYPE: mysql
+            MB_DB_DBNAME: metabase
+            MB_DB_PORT: 3306
+            MB_DB_USER: root
+            MB_DB_PASS: root
+            MB_DB_HOST: dolstd-dolibarr_mariadb
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
+        ports:
+            - "3000:3000"
+        depends_on:
+            - dolstd-mariadb
