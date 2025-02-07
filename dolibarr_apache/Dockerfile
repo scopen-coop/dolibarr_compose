@@ -1,6 +1,6 @@
 FROM php:7.4-apache
 
-ENV PHP_INI_MEMORY_LIMIT 256M
+ENV PHP_INI_MEMORY_LIMIT=256M
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
