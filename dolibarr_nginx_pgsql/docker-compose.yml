@@ -31,7 +31,7 @@ services:
         image: adminer:latest
         container_name: dolstdpg_adminer
         ports:
-            - 7000:8080
+            - "7000:8080"
         depends_on:
             - dolstdpg-dolibarr-pgsqldb
         networks:
