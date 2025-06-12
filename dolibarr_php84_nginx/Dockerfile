@@ -28,6 +28,8 @@ RUN apt-get update -y \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd \
     && mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
@@ -60,4 +62,4 @@ RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
 
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
