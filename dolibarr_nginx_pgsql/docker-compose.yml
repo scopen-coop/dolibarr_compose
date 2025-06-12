@@ -11,7 +11,7 @@ volumes:
 services:
     dolstdpg-dolibarr-pgsqldb:
         image: postgres:12.12-alpine
-        container_name: dolstdpg_dolibarr_pgsqldb
+        container_name: dolstdpg-dolibarr-pgsqldb
         environment:
             POSTGRES_PASSWORD: ${PGSQL_ROOT_PASSWORD}
             POSTGRES_DB: dolibarr
@@ -48,7 +48,6 @@ services:
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
         ports:
-            - "80:80"
             - "443:443"
         networks:
             - dolstdpg-internal-pod

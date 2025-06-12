@@ -1,7 +1,7 @@
 networks:
-    dolstd84-internal-pod:
+    dolstd82-internal-pod:
         internal: true
-    dolstd84-external-pod:
+    dolstd82-external-pod:
         internal: false
 
 volumes:
@@ -9,42 +9,42 @@ volumes:
         external: true
 
 services:
-    dolstd84-mariadb:
+    dolstd82-mariadb:
         image: mariadb:10.8
         command:
             - --character-set-server=utf8mb4
             - --collation-server=utf8mb4_unicode_ci
             - --max_allowed_packet=512M
-        container_name: dolstd84-dolibarr_mariadb
+        container_name: dolstd82-dolibarr_mariadb
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DATABASE: dolibarr
         ports:
             - "3306:3306"
         networks:
-            - dolstd84-internal-pod
-            - dolstd84-external-pod
+            - dolstd82-internal-pod
+            - dolstd82-external-pod
         volumes:
             - mariadb-dolibarr:/var/lib/mysql
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
 
-    dolstd84_phpmyadmin:
+    dolstd82_phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        container_name: dolstd84_phpmyadmin
+        container_name: dolstd82_phpmyadmin
         environment:
-            PMA_HOST: dolstd84-mariadb
+            PMA_HOST: dolstd82-mariadb
         depends_on:
-            - dolstd84-mariadb
+            - dolstd82-mariadb
         ports:
             - "8080:80"
         networks:
-            - dolstd84-internal-pod
-            - dolstd84-external-pod
+            - dolstd82-internal-pod
+            - dolstd82-external-pod
 
-    dolstd84-web-nginx:
+    dolstd82-web-nginx:
         image: nginx:1.18-alpine
-        container_name: dolstd84_dolibarr_nginx
+        container_name: dolstd82_dolibarr_nginx
         volumes:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ./certs:/etc/nginx/ssl
@@ -57,15 +57,15 @@ services:
             - "443:443"
             - "587:587"
         networks:
-            - dolstd84-internal-pod
-            - dolstd84-external-pod
+            - dolstd82-internal-pod
+            - dolstd82-external-pod
         depends_on:
-            - dolstd84-mariadb
-            - dolstd84-mail
+            - dolstd82-mariadb
+            - dolstd82-mail
 
-    dolstd84-web-php:
+    dolstd82-web-php:
         build: .
-        container_name: dolstd84_dolibarr_web
+        container_name: dolstd82_dolibarr_web
         volumes:
             - ../../../module/dolibarr/htdocs:/var/www/htdocs:rw
             - ../../../module/dolibarr/scripts:/var/www/scripts:rw
@@ -78,17 +78,17 @@ services:
         ports:
             - "6000:9003"
         networks:
-            - dolstd84-internal-pod
-            - dolstd84-external-pod
+            - dolstd82-internal-pod
+            - dolstd82-external-pod
         depends_on:
-            - dolstd84-web-nginx
+            - dolstd82-web-nginx
 
-    dolstd84-mail:
+    dolstd82-mail:
         image: maildev/maildev
-        container_name: dolstd84_maildev
+        container_name: dolstd82_maildev
         ports:
             - "6081:1080"
             - "25:1025"
         networks:
-            - dolstd84-internal-pod
-            - dolstd84-external-pod
+            - dolstd82-internal-pod
+            - dolstd82-external-pod
