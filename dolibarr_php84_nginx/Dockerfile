@@ -9,7 +9,6 @@ RUN apt-get update -y \
         libjpeg62-turbo \
         libpng-dev \
         libpng16-16 \
-        libldap2-dev \
         libxml2-dev \
         libzip-dev \
         zlib1g-dev \
@@ -28,12 +27,8 @@ RUN apt-get update -y \
         npm \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql soap zip \
-    && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) gd ldap imap && \
-    mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
+    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql zip \
+    && mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
 RUN chown -R 1000:www-data /var/documents
@@ -44,6 +39,9 @@ RUN echo 'xdebug.start_with_request=yes' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.show_local_vars=1' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.var_display_max_depth=10' >> ${PHP_INI_DIR}/php.ini
+
+RUN pecl install imap && \
+    docker-php-ext-enable imap
 
 #set change max value
 RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 9999/' ${PHP_INI_DIR}/php.ini \
@@ -62,4 +60,4 @@ RUN echo "from local@localdomain.com" >> /etc/msmtprc
 RUN echo "domain localhost.localdomain" >> /etc/msmtprc
 RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
