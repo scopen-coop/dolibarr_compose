@@ -38,7 +38,6 @@ RUN chown -R 1000:www-data /var/documents
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.start_with_request=yes' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.show_local_vars=1' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.var_display_max_depth=10' >> ${PHP_INI_DIR}/php.ini
 
