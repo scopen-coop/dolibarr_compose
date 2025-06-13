@@ -8,6 +8,21 @@ volumes:
     mariadb-dolibarr:
         external: true
 
+    ollama_storage:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /opt/ollama/storage
+
+    ollama_webui:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /opt/ollama/webui
+
+
 services:
     dolstd84-mariadb:
         image: mariadb:10.8
@@ -91,3 +106,23 @@ services:
         networks:
             - dolstd84-internal-pod
             - dolstd84-external-pod
+
+    ollama-server:
+        image: ollama/ollama
+        container_name: ollama-server
+        networks:
+            - dolstd84-internal-pod
+            - dolstd84-external-pod
+        ports:
+            - "11434:11434"
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: all  # Utilise tous les GPU disponibles
+                          capabilities: [ gpu ]
+        volumes:
+            - ollama_storage:/root/.ollama
+        #    restart: unless-stopped
+        restart: no
