@@ -95,7 +95,7 @@ services:
             - dolstd-external-pod
 
     dolstd-metabase:
-        container_name: dolber_metabase
+        container_name: dolstd_metabase
         image: metabase/metabase
         restart: "no"
         environment:
@@ -104,7 +104,7 @@ services:
             MB_DB_DBNAME: metabase
             MB_DB_PORT: 3306
             MB_DB_USER: root
-            MB_DB_PASS: root
+            MB_DB_PASS: ${MYSQL_ROOT_PASSWORD}
             MB_DB_HOST: dolstd-dolibarr_mariadb
         networks:
             - dolstd-internal-pod
