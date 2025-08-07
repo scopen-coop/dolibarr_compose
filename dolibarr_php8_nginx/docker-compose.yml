@@ -72,7 +72,6 @@ services:
             - ../../../module/dolibarr/dev:/var/www/dev:rw
             - ../../../module/dolibarr/documents:/var/documents:rw
             - ../../../module/dolibarr/build:/var/www/build:rw
-            - ../../../module/dolibarr/phpstan_custom.neon:/var/www/phpstan_custom.neon:r
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
         ports:
