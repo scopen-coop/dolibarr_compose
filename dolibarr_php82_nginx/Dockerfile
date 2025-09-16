@@ -22,7 +22,8 @@ RUN apt-get update -y \
         msmtp \
         msmtp-mta \
         mailutils \
-        libc-client-dev \
+        libc-dev \
+        libssl-dev \
         libkrb5-dev \
         telnet \
         npm \
@@ -30,10 +31,11 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql soap zip \
     && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    # && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) gd ldap imap && \
-    mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
+    # && docker-php-ext-install -j$(nproc) gd ldap imap \
+    && docker-php-ext-install -j$(nproc) gd ldap \
+    && mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
 RUN chown -R 1000:www-data /var/documents
