@@ -1,0 +1,93 @@
+networks:
+    dolstd81-internal-pod:
+        internal: true
+    dolstd81-external-pod:
+        internal: false
+
+volumes:
+    mariadb-dolibarr:
+        external: true
+
+services:
+    dolstd81-mariadb:
+        image: mariadb:10.8
+        command:
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+            - --max_allowed_packet=512M
+        container_name: dolstd81-dolibarr_mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: dolibarr
+        ports:
+            - "3306:3306"
+        networks:
+            - dolstd81-internal-pod
+            - dolstd81-external-pod
+        volumes:
+            - mariadb-dolibarr:/var/lib/mysql
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+
+    dolstd81_phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: dolstd81_phpmyadmin
+        environment:
+            PMA_HOST: dolstd81-mariadb
+        depends_on:
+            - dolstd81-mariadb
+        ports:
+            - "8080:80"
+        networks:
+            - dolstd81-internal-pod
+            - dolstd81-external-pod
+
+    dolstd81-web-nginx:
+        image: nginx:1.18-alpine
+        container_name: dolstd81_dolibarr_nginx
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./certs:/etc/nginx/ssl
+            - ../../../module/dolibarr/htdocs:/var/www/htdocs:rw
+            - ../../../module/dolibarr/scripts:/var/www/scripts:rw
+            - ./nginx/log/:/var/log/nginx/
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - "443:443"
+            - "587:587"
+        networks:
+            - dolstd81-internal-pod
+            - dolstd81-external-pod
+        depends_on:
+            - dolstd81-mariadb
+            - dolstd81-mail
+
+    dolstd81-web-php:
+        build: .
+        container_name: dolstd81_dolibarr_web
+        volumes:
+            - ../../../module/dolibarr/htdocs:/var/www/htdocs:rw
+            - ../../../module/dolibarr/scripts:/var/www/scripts:rw
+            - ../../../module/dolibarr/dev:/var/www/dev:rw
+            - ../../../module/dolibarr/documents:/var/documents:rw
+            - ../../../module/dolibarr/build:/var/www/build:rw
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - "6000:9003"
+        networks:
+            - dolstd81-internal-pod
+            - dolstd81-external-pod
+        depends_on:
+            - dolstd81-web-nginx
+
+    dolstd81-mail:
+        image: maildev/maildev
+        container_name: dolstd81_maildev
+        ports:
+            - "6081:1080"
+            - "25:1025"
+        networks:
+            - dolstd81-internal-pod
+            - dolstd81-external-pod

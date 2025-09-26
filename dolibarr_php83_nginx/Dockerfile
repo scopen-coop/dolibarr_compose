@@ -1,19 +1,30 @@
-FROM php:8.3-fpm
+FROM php:8.3-fpm-bookworm
 
 ENV PHP_INI_MEMORY_LIMIT=256M
 
 RUN apt-get update -y \
+    && apt-get dist-upgrade -y \
     && apt-get install -y --no-install-recommends \
+        libc-client-dev \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
-        libjpeg62-turbo \
-        libpng-dev \
-        libpng16-16 \
+        libkrb5-dev \
         libldap2-dev \
+        libldap-common \
+        libpng-dev \
+        libpq-dev \
         libxml2-dev \
         libzip-dev \
-        zlib1g-dev \
-        libicu-dev \
+        libtidy-dev \
+        telnet \
+        g++ \
+        default-mysql-client \
+        unzip \
+        curl \
+        apt-utils \
+        msmtp \
+        msmtp-mta \
+        mailutils \
         g++ \
         default-mysql-client \
         unzip \
@@ -29,19 +40,16 @@ RUN apt-get update -y \
         npm \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql soap zip \
+    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
     && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
-    # && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    # && docker-php-ext-install -j$(nproc) gd ldap imap \
-    && docker-php-ext-install -j$(nproc) gd ldap \
+    && docker-php-ext-configure ldap --with-libdir=lib/$(gcc -dumpmachine)/ \
+    && docker-php-ext-install -j$(nproc) ldap \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install imap \
     && mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
 RUN chown -R 1000:www-data /var/documents
-
-#RUN pecl install imap && \
-#    docker-php-ext-enable imap
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini
