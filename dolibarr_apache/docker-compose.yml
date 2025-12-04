@@ -1,0 +1,70 @@
+networks:
+    dolstd-internal-pod:
+        internal: true
+    dolstd-external-pod:
+        internal: false
+
+volumes:
+    mariadb-dolibarr:
+        external: true
+
+services:
+    dolstd-mariadb-apache:
+        image: mariadb:latest
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES UTF8;'
+        container_name: dolibarr_mariadb_apache
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: dolibarr
+        ports:
+            - "3306:3306"
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
+        volumes:
+            - mariadb-dolibarr:/var/lib/mysql
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+
+    dolstd_phpmyadmin_apache:
+        image: phpmyadmin/phpmyadmin
+        container_name: dolstd_phpmyadmin_apache
+        environment:
+            PMA_HOST: dolstd-mariadb-apache
+        depends_on:
+            - dolstd-mariadb-apache
+        ports:
+            - "8080:80"
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
+
+    web:
+        build: .
+        container_name: dolibarr_web
+        environment:
+            HOST_USER_ID: $HOST_USER_ID
+        volumes:
+            - ../../../module/dolibarr/htdocs:/var/www/htdocs:rw
+            - ../../../module/dolibarr/documents:/var/documents:rw
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - "80:80"
+            - "6000:9000"
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
+        depends_on:
+            - dolstd-mariadb-apache
+            - dolstd-mail-apache
+
+    dolstd-mail-apache:
+        image: maildev/maildev
+        container_name: dolstd_maildev_apache
+        ports:
+            - "6081:1080"
+            - "25:1025"
+        networks:
+            - dolstd-internal-pod
+            - dolstd-external-pod
