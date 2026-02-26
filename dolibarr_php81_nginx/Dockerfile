@@ -40,12 +40,13 @@ RUN apt-get update -y \
         npm \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
-    && docker-php-ext-configure gd --with-jpeg=/usr/ --with-freetype=/usr/ \
+    && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql soap zip \
+    && docker-php-ext-configure gd --with-jpeg=/usr/lib/x86_64-linux-gnu/ --with-freetype=/usr/include/ \
     && docker-php-ext-configure ldap --with-libdir=lib/$(gcc -dumpmachine)/ \
-    && docker-php-ext-install -j$(nproc) ldap \
+    && docker-php-ext-install -j$(nproc) ldap gd \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install imap \
+    && docker-php-ext-enable gd \
     && mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents

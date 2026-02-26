@@ -41,8 +41,9 @@ RUN apt-get update -y \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql zip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure gd --with-jpeg=/usr/lib/x86_64-linux-gnu/ --with-freetype=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-enable gd \
     && docker-php-ext-configure ldap --with-libdir=lib/$(gcc -dumpmachine)/ \
     && docker-php-ext-install -j$(nproc) ldap \
     && mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
