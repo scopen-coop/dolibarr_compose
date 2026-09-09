@@ -1,6 +1,7 @@
 FROM php:7.4-fpm
 
 ENV PHP_INI_MEMORY_LIMIT 256M
+ARG CURRENT_UID=1000
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -36,7 +37,7 @@ RUN apt-get update -y \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
-RUN chown -R 1000:www-data /var/documents
+RUN chown -R ${CURRENT_UID}:www-data /var/documents
 
 RUN pecl install xdebug-3.1.0 && docker-php-ext-enable xdebug
 RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini

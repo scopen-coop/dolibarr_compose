@@ -1,6 +1,7 @@
 FROM php:8.2-fpm-bookworm
 
 ENV PHP_INI_MEMORY_LIMIT=256M
+ARG CURRENT_UID=1000
 
 RUN apt-get update -y \
     && apt-get dist-upgrade -y \
@@ -50,7 +51,7 @@ RUN apt-get update -y \
     && mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
-RUN chown -R 1000:www-data /var/documents
+RUN chown -R ${CURRENT_UID}:www-data /var/documents
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 RUN echo 'xdebug.mode=develop' >> ${PHP_INI_DIR}/php.ini

@@ -61,7 +61,7 @@ services:
 
     dolstd-mail-apache:
         image: maildev/maildev
-        container_name: dolstd_maildev_apache
+        container_name: dolstd_mail_apache
         ports:
             - "6081:1080"
             - "25:1025"
