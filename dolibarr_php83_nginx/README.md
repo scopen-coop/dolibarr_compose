@@ -2,13 +2,7 @@
 
 The docker-compose.yml file is used to build and run Dolibarr in the current workspace.
 This docker image intended for developpement usage.
-For production usage you should consider other contributor reference like https://hub.docker.com/r/tuxgasy/dolibarr 
-
-Structure des dossiers
-www/docker/dolibar_compose/dolibarr_nginx
-www/docker/dolibar_compose/dolibarr_apache
-www/docker/dolibar_compose/dolibarr_nginx_pgsql
-www/module/dolibarr/htdocs
+For production usage you should consider other contributor reference like https://hub.docker.com/r/tuxgasy/dolibarr
 
 First times create volume for maria db
 
